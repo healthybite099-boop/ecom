@@ -18,9 +18,10 @@ export default function Login() {
     const router = useRouter();
 
     useEffect(() => {
-        if (session) {
-            // Redirect to the dashboard if the user is already logged in
+        if (session?.user?.usertype === '2') {
             router.push('/admin');
+        } else if (session) {
+            router.push('/user/dashboard');
         }
     }, [session, router]);
     const isFormValid = () => {
@@ -52,8 +53,7 @@ export default function Login() {
                 setLoading(false);
                 return;
             }
-
-            router.push('/admin'); // Redirect to the dashboard after successful login
+            // Redirect handled by useEffect based on usertype
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 setError('Server error: ' + (error.response.data.message || 'An error occurred.'));

@@ -16,7 +16,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
             <Link href="/" className="text-gray-700 hover:text-blue-600">
               Home
             </Link>
@@ -31,6 +31,12 @@ export default function Header() {
             </Link>
             <Link href="/Contactus" className="text-gray-700 hover:text-blue-600">
               Contact
+            </Link>
+            <Link
+              href="/user/dashboard"
+              className="ml-4 px-3 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700"
+            >
+              Login / Dashboard
             </Link>
           </nav>
 
@@ -85,6 +91,13 @@ export default function Header() {
           </Link>
           <Link href="../Contactus" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
             Contact
+          </Link>
+          <Link
+            href="../user/dashboard"
+            className="inline-block mt-2 px-3 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700"
+            onClick={() => setIsOpen(false)}
+          >
+            Login / Dashboard
           </Link>
         </nav>
       </aside>

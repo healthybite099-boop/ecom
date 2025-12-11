@@ -54,10 +54,14 @@ export async function GET(req) {
     await dbConnect();
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status");
+    const userId = searchParams.get("userId");
 
     const filter = {};
     if (status) {
       filter.status = status;
+    }
+    if (userId) {
+      filter.userId = userId;
     }
 
     const orders = await OrderModel.find(filter)

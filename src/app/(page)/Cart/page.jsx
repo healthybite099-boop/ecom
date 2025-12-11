@@ -3,6 +3,8 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function getOrCreateUserId() {
   if (typeof window === "undefined") return "";
@@ -29,6 +31,8 @@ async function loadRazorpayScript() {
 }
 
 export default function CartPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [userId, setUserId] = useState("");
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -36,9 +40,18 @@ export default function CartPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (status === "authenticated") {
+      const realUserId =
+        session?.user?.id || session?.user?._id || "";
+      if (realUserId) {
+        setUserId(realUserId);
+        return;
+      }
+    }
+
     const id = getOrCreateUserId();
     setUserId(id);
-  }, []);
+  }, [session, status]);
 
   useEffect(() => {
     if (!userId) return;
@@ -119,6 +132,16 @@ export default function CartPage() {
 
     const { subtotal } = calculateTotals();
     if (!subtotal || subtotal <= 0) return;
+
+    if (
+      status !== "authenticated" ||
+      !userId ||
+      userId.startsWith("guest_")
+    ) {
+      alert("Please login to checkout so your order is linked to your account.");
+      router.push("/login");
+      return;
+    }
 
     setCheckingOut(true);
     try {

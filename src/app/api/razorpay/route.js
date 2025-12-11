@@ -16,14 +16,23 @@ export async function POST(req) {
     const body = await req.json();
     const { amount } = body;
 
-    if (!amount || isNaN(amount) || amount <= 0) {
+    const numericAmount = Number(amount);
+    if (!numericAmount || isNaN(numericAmount) || numericAmount <= 0) {
       return new Response(JSON.stringify({ error: "Invalid amount" }), {
         status: 400,
       });
     }
 
+    const amountInPaise = Math.round(numericAmount * 100); // ensure integer paise
+
+    if (!Number.isInteger(amountInPaise) || amountInPaise <= 0) {
+      return new Response(JSON.stringify({ error: "Invalid amount after conversion" }), {
+        status: 400,
+      });
+    }
+
     const order = await razorpay.orders.create({
-      amount: Number(amount) * 100, // convert to paise
+      amount: amountInPaise, // integer paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1, // auto-capture payment

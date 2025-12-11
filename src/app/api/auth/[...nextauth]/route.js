@@ -52,6 +52,9 @@ export const authOptions = {
     },
     async session({ session, token }) {
       session.user.usertype = token.usertype;
+      if (token?.sub) {
+        session.user.id = token.sub;
+      }
       return session;
     },
   },

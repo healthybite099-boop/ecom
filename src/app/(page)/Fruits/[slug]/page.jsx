@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Star, Truck, ShieldCheck } from "lucide-react";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 function getOrCreateUserId() {
   if (typeof window === "undefined") return "";
@@ -21,6 +22,7 @@ function getOrCreateUserId() {
 export default function ProductPage() {
   const { slug } = useParams();
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -28,11 +30,20 @@ export default function ProductPage() {
   const [userId, setUserId] = useState("");
   const [cartLoading, setCartLoading] = useState(false);
   const [qty, setQty] = useState(1);
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
 
   useEffect(() => {
+    if (status === "authenticated") {
+      const realUserId = session?.user?.id || session?.user?._id || "";
+      if (realUserId) {
+        setUserId(realUserId);
+        return;
+      }
+    }
+
     const id = getOrCreateUserId();
     setUserId(id);
-  }, []);
+  }, [session, status]);
 
   useEffect(() => {
     if (!slug) return;
@@ -58,6 +69,11 @@ export default function ProductPage() {
   }, [slug]);
 
   const handleAddToCart = async () => {
+    if (status !== "authenticated") {
+      setShowAuthPopup(true);
+      return;
+    }
+
     if (!product || !product._id || !userId) return;
     try {
       setCartLoading(true);
@@ -351,6 +367,43 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {showAuthPopup && (
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h2 className="text-lg font-semibold mb-2 text-slate-900">Login required</h2>
+            <p className="text-sm text-slate-600 mb-4">
+              Please login or sign up with your mobile number to continue.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  setShowAuthPopup(false);
+                  router.push("/login");
+                }}
+                className="w-full py-2.5 rounded-full text-sm font-semibold bg-amber-800 text-white hover:bg-amber-900 transition"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => {
+                  setShowAuthPopup(false);
+                  router.push("/register");
+                }}
+                className="w-full py-2.5 rounded-full text-sm font-semibold border border-amber-800 text-amber-800 bg-white hover:bg-amber-50 transition"
+              >
+                Sign up
+              </button>
+              <button
+                onClick={() => setShowAuthPopup(false)}
+                className="w-full py-2 rounded-full text-xs text-slate-500 hover:text-slate-700"
+              >
+                Continue browsing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
