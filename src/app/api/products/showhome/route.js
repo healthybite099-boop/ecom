@@ -8,67 +8,66 @@ export async function GET(req) {
     await dbConnect();
 
     const { searchParams } = new URL(req.url);
+
     const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "5", 10);
+    const limit = parseInt(searchParams.get("limit") || "12", 10);
+    const categoryId = searchParams.get("category");
+    const search = searchParams.get("search");
+    const sort = searchParams.get("sort");
 
     const currentPage = Number.isNaN(page) || page < 1 ? 1 : page;
-    const pageSizeRaw = Number.isNaN(limit) || limit < 1 ? 5 : limit;
-    // enforce a maximum page size to avoid expensive queries
+    const pageSizeRaw = Number.isNaN(limit) || limit < 1 ? 12 : limit;
     const MAX_PAGE_SIZE = 50;
     const pageSize = Math.min(pageSizeRaw, MAX_PAGE_SIZE);
     const skip = (currentPage - 1) * pageSize;
 
-    // total number of active categories (used for accurate hasMore)
-    const totalActiveCategories = await CategoryModel.countDocuments({ status: "Active" });
+    const filter = { status: "Active" };
 
-    const categories = await CategoryModel.find(
-      { status: "Active" },
-      { _id: 1, name: 1, slug: 1 }
-    )
-      .sort({ createdAt: -1 }) // optional: deterministic ordering
-      .skip(skip)
-      .limit(pageSize)
-      .lean();
+    if (categoryId && categoryId !== "all") {
+      filter.category = categoryId;
+    }
 
-    const result = await Promise.all(
-      categories.map(async (cat) => {
-        // use ObjectId (cat._id) rather than string
-        const products = await ProductModel.find(
-          { category: cat._id, status: "Active" },
-          {
-            name: 1,
-            images: 1,
-            slug: 1,
-            brand: 1,
-            price: 1,
-            discountPercentage: 1,
-            finalPrice: 1,
-            weight: 1,
-            isAvailable: 1,
-          }
-        )
-          .sort({ createdAt: -1 })
-          .limit(6)
-          .lean();
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
 
-        if (products.length === 0) return null;
+    let sortQuery = { createdAt: -1 };
+    if (sort === "price_desc") {
+      sortQuery = { finalPrice: -1, price: -1 };
+    } else if (sort === "price_asc") {
+      sortQuery = { finalPrice: 1, price: 1 };
+    }
 
-        return {
-          categoryId: cat._id,
-          categoryName: cat.name,
-          slug: cat.slug,
-          products,
-        };
+    const [products, totalItems] = await Promise.all([
+      ProductModel.find(filter, {
+        name: 1,
+        images: 1,
+        slug: 1,
+        brand: 1,
+        price: 1,
+        discountPercentage: 1,
+        finalPrice: 1,
+        weight: 1,
+        isAvailable: 1,
+        category: 1,
       })
-    );
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      ProductModel.countDocuments(filter),
+    ]);
 
-    const filtered = result.filter((item) => item !== null);
-
-    // hasMore = are there remaining categories after this page?
-    const hasMore = skip + categories.length < totalActiveCategories;
+    const hasMore = skip + products.length < totalItems;
 
     return NextResponse.json(
-      { success: true, data: filtered, page: currentPage, hasMore },
+      {
+        success: true,
+        data: products,
+        page: currentPage,
+        hasMore,
+        totalItems,
+      },
       { status: 200 }
     );
   } catch (error) {
