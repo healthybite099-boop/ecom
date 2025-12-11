@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
@@ -242,8 +242,10 @@ export default function CartPage() {
                   >
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-amber-50 overflow-hidden flex-shrink-0">
                       {product.images && product.images[0] && (
-                        <img
-                          src={product.images[0]}
+                        <Image
+                          width={100}
+                          height={100}
+                          src={`https:${product.images[0]}`}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
@@ -345,11 +347,10 @@ export default function CartPage() {
           <button
             disabled={checkingOut || !subtotal}
             onClick={handleCheckout}
-            className={`w-full mt-4 py-3 rounded-2xl text-sm font-semibold shadow-sm transition ${
-              subtotal
+            className={`w-full mt-4 py-3 rounded-2xl text-sm font-semibold shadow-sm transition ${subtotal
                 ? "bg-emerald-600 text-white hover:bg-emerald-700"
                 : "bg-slate-100 text-slate-400 cursor-not-allowed"
-            }`}
+              }`}
           >
             {checkingOut ? "Processing..." : "Checkout with Razorpay"}
           </button>

@@ -4,7 +4,6 @@ import Link from "next/link";
 
 function ProductCard({ name, price, brand, image, slug }) {
   const displayPrice = price ? `₹${price}` : "—";
-  const fallback = "/placeholder-product.png";
 
   return (
     <Link href={`/Fruits/${slug}`} className="block">
@@ -20,7 +19,7 @@ function ProductCard({ name, price, brand, image, slug }) {
         {/* Product Image - No Padding */}
         <div className="relative h-40 w-full bg-gray-50 flex items-center justify-center overflow-hidden">
           <Image
-            src={image || fallback}
+            src={`https:${image}`}
             alt={name}
             fill
             className="

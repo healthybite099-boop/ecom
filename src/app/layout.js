@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/Component/Header/Header";
 import Footer from "@/Component/Footer/Footer";
 import { AuthProvider } from "./Providers";
+import { Analytics } from "@vercel/analytics/next"
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,9 +25,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-        {children}
-        </AuthProvider>
+        <Analytics>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </Analytics>
       </body>
     </html>
   );

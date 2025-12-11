@@ -23,5 +23,6 @@ export const uploadToS3 = async (file, folder = "uploads") => {
 
   await s3.send(command);
 
-  return `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+  // Return CloudFront URL instead of S3 URL
+  return `${process.env.CLOUDFRONT_URL}/${fileName}`;
 };

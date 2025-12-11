@@ -12,21 +12,29 @@ export async function GET(req) {
     const limit = parseInt(searchParams.get("limit") || "5", 10);
 
     const currentPage = Number.isNaN(page) || page < 1 ? 1 : page;
-    const pageSize = Number.isNaN(limit) || limit < 1 ? 5 : limit;
+    const pageSizeRaw = Number.isNaN(limit) || limit < 1 ? 5 : limit;
+    // enforce a maximum page size to avoid expensive queries
+    const MAX_PAGE_SIZE = 50;
+    const pageSize = Math.min(pageSizeRaw, MAX_PAGE_SIZE);
     const skip = (currentPage - 1) * pageSize;
+
+    // total number of active categories (used for accurate hasMore)
+    const totalActiveCategories = await CategoryModel.countDocuments({ status: "Active" });
 
     const categories = await CategoryModel.find(
       { status: "Active" },
       { _id: 1, name: 1, slug: 1 }
     )
+      .sort({ createdAt: -1 }) // optional: deterministic ordering
       .skip(skip)
       .limit(pageSize)
       .lean();
 
     const result = await Promise.all(
       categories.map(async (cat) => {
+        // use ObjectId (cat._id) rather than string
         const products = await ProductModel.find(
-          { category: cat._id.toString(), status: "Active" },
+          { category: cat._id, status: "Active" },
           {
             name: 1,
             images: 1,
@@ -56,7 +64,8 @@ export async function GET(req) {
 
     const filtered = result.filter((item) => item !== null);
 
-    const hasMore = filtered.length > 0 && categories.length === pageSize;
+    // hasMore = are there remaining categories after this page?
+    const hasMore = skip + categories.length < totalActiveCategories;
 
     return NextResponse.json(
       { success: true, data: filtered, page: currentPage, hasMore },

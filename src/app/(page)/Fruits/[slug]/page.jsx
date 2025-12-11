@@ -263,8 +263,8 @@ export default function ProductPage() {
           <div className="space-y-3">
             <div className="relative rounded-2xl overflow-hidden bg-amber-50/80 aspect-[4/3]">
               <Image
-              fill
-                src={mainImage || images[0]}
+                fill
+                src={`https:${mainImage}`}
                 alt={name}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-[1.03]"
               />
@@ -278,13 +278,14 @@ export default function ProductPage() {
                     type="button"
                     onClick={() => setMainImage(img)}
                     className={`flex-shrink-0 rounded-xl border p-1 transition ${(mainImage || images[0]) === img
-                        ? "border-amber-500 ring-1 ring-amber-100"
-                        : "border-slate-200 hover:border-amber-300"
+                      ? "border-amber-500 ring-1 ring-amber-100"
+                      : "border-slate-200 hover:border-amber-300"
                       }`}
                   >
                     <Image
-                      fill
-                      src={img}
+                      width={100}
+                      height={100}
+                      src={`https:${img}`}
                       alt={`${name} ${i + 1}`}
                       className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover"
                     />
@@ -415,8 +416,8 @@ export default function ProductPage() {
                   onClick={handleAddToCart}
                   disabled={!inStock || cartLoading}
                   className={`flex-1 py-3 rounded-2xl text-sm font-semibold transition shadow-sm ${inStock && !cartLoading
-                      ? "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md"
-                      : "bg-slate-100 text-slate-500 cursor-not-allowed"
+                    ? "bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-md"
+                    : "bg-slate-100 text-slate-500 cursor-not-allowed"
                     }`}
                 >
                   {inStock ? (cartLoading ? "Adding..." : "Add to Cart") : "Out of Stock"}

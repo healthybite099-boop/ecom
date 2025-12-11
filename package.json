@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.947.0",
+    "@vercel/analytics": "^1.6.1",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.13.2",
     "bcryptjs": "^3.0.3",
