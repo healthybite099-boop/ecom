@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">AK</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Ecom</h2>
             <p className="mt-2 text-sm text-gray-600">
               Your one-stop solution for premium products.  
               Delivering quality and trust since 2023.

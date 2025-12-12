@@ -12,7 +12,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center" aria-label="Go to Home">
-            <span className="text-2xl font-bold text-gray-800">AK</span>
+            <span className="text-2xl font-bold text-gray-800">Ecom</span>
           </Link>
 
           {/* Desktop Navigation */}
