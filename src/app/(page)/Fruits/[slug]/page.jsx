@@ -184,7 +184,7 @@ export default function ProductPage() {
               style={{ minHeight: 620 }}
             >
               <Image
-                src={mainImage ? `https:${mainImage}` : "/placeholder.png"}
+                src={mainImage}
                 alt={name}
                 fill
                 priority
