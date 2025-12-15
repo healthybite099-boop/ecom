@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
-
+import WhatsAppButton from "../WhatsAppButton";
 export default function Footer() {
   return (
     <footer className="bg-white shadow-sm py-5" role="contentinfo">
@@ -9,17 +9,17 @@ export default function Footer() {
           <div>
             <h2 className="text-2xl font-bold text-gray-800">Ecom</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Your one-stop solution for premium products.  
+              Your one-stop solution for premium products.
               Delivering quality and trust since 2023.
             </p>
           </div>
-
+          <WhatsAppButton />
           <nav aria-label="Company">
             <h3 className="text-sm font-semibold text-gray-900 uppercase">
               Company
             </h3>
             <ul className="mt-4 space-y-2">
-              
+
               <li>
                 <Link href="/Cart" className="text-gray-600 hover:text-gray-900">
                   Cart
