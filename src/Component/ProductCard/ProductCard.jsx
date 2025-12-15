@@ -44,7 +44,7 @@ export default function ProductCard({ name, price, brand, image, slug }) {
         >
           {image ? (
             <Image
-              src={image}
+              src={`https:${image}`}
               alt={name}
               fill
               className="
