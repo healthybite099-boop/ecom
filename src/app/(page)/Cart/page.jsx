@@ -268,7 +268,7 @@ export default function CartPage() {
                         <Image
                           width={100}
                           height={100}
-                          src={`https:${product.images[0]}`}
+                          src={`${product.images[0]}`}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />

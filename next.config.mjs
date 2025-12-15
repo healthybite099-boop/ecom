@@ -5,6 +5,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "d2bpblxcbrb9ld.cloudfront.net",
+        port: "",
         pathname: "/**",
       },
     ],

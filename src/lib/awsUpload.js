@@ -9,20 +9,36 @@ const s3 = new S3Client({
   },
 });
 
+// 🔹 normalize CloudFront URL
+const getCloudFrontBaseUrl = () => {
+  let url = process.env.CLOUDFRONT_URL || "";
+
+  // add https if missing
+  if (!url.startsWith("http")) {
+    url = `https://${url}`;
+  }
+
+  // remove trailing slash
+  return url.replace(/\/$/, "");
+};
+
 export const uploadToS3 = async (file, folder = "uploads") => {
   const buffer = Buffer.from(await file.arrayBuffer());
-  const fileName = `${folder}/${uuidv4()}-${file.name}`;
-  const contentType = file.type;
+
+  // 🔹 sanitize filename (remove spaces & special chars)
+  const safeName = file.name.replace(/\s+/g, "-");
+  const fileName = `${folder}/${uuidv4()}-${safeName}`;
 
   const command = new PutObjectCommand({
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: fileName,
     Body: buffer,
-    ContentType: contentType,
+    ContentType: file.type,
   });
 
   await s3.send(command);
 
-  // Return CloudFront URL instead of S3 URL
-  return `${process.env.CLOUDFRONT_URL}/${fileName}`;
+  // ✅ ALWAYS return valid absolute URL
+  const cloudFrontUrl = getCloudFrontBaseUrl();
+  return `${cloudFrontUrl}/${fileName}`;
 };

@@ -184,7 +184,7 @@ export default function ProductPage() {
               style={{ minHeight: 620 }}
             >
               <Image
-                src={mainImage ? `https:${mainImage}` : "/placeholder.png"}
+                src={mainImage ? `${mainImage}` : "/placeholder.png"}
                 alt={name}
                 fill
                 priority
@@ -208,7 +208,7 @@ export default function ProductPage() {
                       <Image
                         width={84}
                         height={84}
-                        src={`https:${img}`}
+                        src={img}
                         alt={`${name} ${i + 1}`}
                         className="w-20 h-20 rounded-md object-cover"
                       />
