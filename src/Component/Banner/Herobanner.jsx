@@ -17,21 +17,21 @@ const slides = [
     title: "Fresh Fruits Delivered",
     subtitle: "100% Organic & Farm Fresh",
     image:
-      "https://d2bpblxcbrb9ld.cloudfront.net/products/114ad521-3305-47fe-9589-1fbb91e9f549-9e375bf3-a073-4d6a-92b8-6f7fe7642622-top-view-mix-nuts-dried-fruits-almonds-raisins-pumpkin-seeds-with-dried-apricots-table.webp",
+      "/images/2.jpg",
   },
   {
     id: 2,
     title: "Healthy & Natural",
     subtitle: "Best Quality at Best Price",
     image:
-      "https://d2bpblxcbrb9ld.cloudfront.net/products/114ad521-3305-47fe-9589-1fbb91e9f549-9e375bf3-a073-4d6a-92b8-6f7fe7642622-top-view-mix-nuts-dried-fruits-almonds-raisins-pumpkin-seeds-with-dried-apricots-table.webp",
+      "/images/3.jpg",
   },
   {
     id: 3,
     title: "Daily Fresh Stock",
     subtitle: "Direct From Farmers",
     image:
-      "https://d2bpblxcbrb9ld.cloudfront.net/products/114ad521-3305-47fe-9589-1fbb91e9f549-9e375bf3-a073-4d6a-92b8-6f7fe7642622-top-view-mix-nuts-dried-fruits-almonds-raisins-pumpkin-seeds-with-dried-apricots-table.webp",
+      "/images/3.jpg",
   },
 ];
 
@@ -63,7 +63,7 @@ export default function Herobanner() {
             />
 
             {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
+            <div className="absolute inset-0 bg-orange-900/20" />
 
             {/* Glass Content */}
             <div className="absolute inset-0 flex items-center">

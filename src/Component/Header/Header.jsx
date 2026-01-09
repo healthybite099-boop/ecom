@@ -20,9 +20,9 @@ export default function Header() {
             <Link href="/" className="text-gray-700 hover:text-blue-600">
               Home
             </Link>
-            {/* <Link href="/products" className="text-gray-700 hover:text-blue-600">
+            <Link href="/AllProducts" className="text-gray-700 hover:text-blue-600">
               Products
-            </Link> */}
+            </Link>
             <Link href="/Cart" className="text-gray-700 hover:text-blue-600">
               Carts
             </Link>
