@@ -7,134 +7,138 @@ import Link from "next/link";
 const products = [
     {
         id: 1,
-        name: "Fresh Red Apples",
-        brand: "Kashmir Farms",
+        name: "Red Apples",
+        brand: "Kashmir",
         price: 180,
-        category: "Fruits",
-        weight: "1 Kg",
-        rating: 4.5,
-        image: "/images/4.jpeg",
-        slug: "fresh-red-apples",
+        image: "/images/1.png",
+        slug: "red-apples",
     },
     {
         id: 2,
-        name: "Organic Bananas",
-        brand: "Green Valley",
+        name: "Bananas",
+        brand: "Organic",
         price: 90,
-        category: "Fruits",
-        weight: "1 Dozen",
-        rating: 4.3,
-        image: "/images/4.jpeg",
-
-        slug: "organic-bananas",
+        image: "/images/1.png",
+        slug: "bananas",
     },
     {
         id: 3,
-        name: "Juicy Oranges",
-        brand: "Nagpur Fresh",
+        name: "Oranges",
+        brand: "Nagpur",
         price: 140,
-        category: "Fruits",
-        weight: "1 Kg",
-        rating: 4.6,
-        image: "/images/4.jpeg",
-
-        slug: "juicy-oranges",
+        image: "/images/1.png",
+        slug: "oranges",
+    },
+    {
+        id: 4,
+        name: "Grapes",
+        brand: "Fresh Farm",
+        price: 120,
+        image: "/images/1.png",
+        slug: "grapes",
+    },
+    {
+        id: 5,
+        name: "Mango",
+        brand: "Alphonso",
+        price: 260,
+        image: "/images/1.png",
+        slug: "mango",
+    },
+    {
+        id: 6,
+        name: "Pineapple",
+        brand: "Tropical",
+        price: 110,
+        image: "/images/1.png",
+        slug: "pineapple",
     },
 ];
 
 export default function ProductSection() {
     return (
-        <section className="max-w-7xl mx-auto px-4 py-10">
-            {/* Section Header */}
-            <div className="mb-8 text-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#3b2224]">
-                    Fresh Fruits Collection
-                </h2>
-                <p className="text-sm text-[#6b4b4d] mt-2">
-                    Hand-picked, farm fresh & quality assured
-                </p>
-            </div>
+        <section className=" mx-auto px-3 py-6">
+            {/* Header */}
+           <div className="mb-4 flex items-center justify-between">
+  <h2 className="text-2xl md:text-3xl font-bold text-[#3b2224]">
+    Fresh Dry Fruits
+  </h2>
 
-            {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <button
+    className="
+      text-sm md:text-base font-semibold
+      text-[#4b1b23]
+      hover:underline
+      transition
+    "
+  >
+    View All →
+  </button>
+</div>
+
+
+            {/* Grid */}
+            <div
+                className="
+          grid gap-4
+          grid-cols-2
+          md:grid-cols-4
+          lg:grid-cols-6
+        "
+            >
                 {products.map((item) => (
-                    <Link key={item.id} href={`/Fruits/${item.slug}`} className="block">
+                    <Link key={item.id} href={`/Fruits/${item.slug}`}>
                         <article
                             className="
-                relative bg-white/60 backdrop-blur-lg
-                rounded-xl border border-[#d9c7b8]
+                bg-white/60 backdrop-blur-md
+                rounded-lg border border-[#d9c7b8]
                 overflow-hidden
-                shadow-[0_4px_18px_rgba(0,0,0,0.12)]
+                shadow-sm
                 transition-all duration-300
-                hover:shadow-[0_8px_28px_rgba(0,0,0,0.2)]
-                hover:-translate-y-1
+                hover:shadow-md hover:-translate-y-0.5
               "
                         >
-                            {/* Brand Badge */}
-                            <span
-                                className="
-                  absolute top-3 left-3 z-10
-                  px-3 py-1 rounded-full
-                  bg-[#4b1b23] text-white
-                  text-xs font-semibold shadow-md
-                "
-                            >
-                                {item.brand}
-                            </span>
+                            {/* Brand */}
+                            <div className="px-2 pt-2">
+                                <span className="text-[10px] font-semibold text-white bg-[#4b1b23] px-2 py-0.5 rounded-full">
+                                    {item.brand}
+                                </span>
+                            </div>
 
                             {/* Image */}
-                            <div className="relative w-full aspect-[4/3] bg-[#f5efe6] overflow-hidden">
+                            <div className="relative w-full aspect-[4/3] mt-2 bg-[#f5efe6]">
                                 <Image
                                     src={item.image}
                                     alt={item.name}
                                     fill
-                                    className="object-cover transition-transform duration-500 hover:scale-105"
+                                    className="object-cover"
                                 />
                             </div>
 
                             {/* Content */}
-                            <div className="p-4">
-                                <h3 className="text-base font-semibold text-[#3b2224] line-clamp-1">
+                            <div className="p-2">
+                                <h3 className="text-sm font-semibold text-[#3b2224] line-clamp-1">
                                     {item.name}
                                 </h3>
 
-                                <p className="text-xs text-[#6b4b4d] mt-1">
-                                    {item.category} • {item.weight}
-                                </p>
-
-                                {/* Rating */}
-                                <div className="flex items-center gap-1 text-sm mt-2">
-                                    <span className="text-yellow-500">★</span>
-                                    <span className="font-medium text-[#3b2224]">
-                                        {item.rating}
-                                    </span>
-                                    <span className="text-xs text-[#6b4b4d]">(Reviews)</span>
-                                </div>
-
-                                {/* Price */}
-                                <div className="flex items-center gap-3 mt-3">
-                                    <span className="text-sm text-[#6b4b4d] line-through">
-                                        ₹{item.price + 40}
-                                    </span>
-                                    <span className="text-lg font-bold text-[#3b2224]">
+                                <div className="flex items-center justify-between mt-1">
+                                    <span className="text-sm font-bold text-[#3b2224]">
                                         ₹{item.price}
                                     </span>
-                                </div>
 
-                                {/* Action Button */}
-                                <button
-                                    className="
-                    mt-4 w-full py-2
-                    rounded-full font-semibold
-                    border border-[#4b1b23]
-                    text-[#4b1b23]
-                    transition-all duration-200
-                    hover:bg-[#4b1b23] hover:text-white
-                    active:scale-95
-                  "
-                                >
-                                    View Details
-                                </button>
+                                    <button
+                                        className="
+                      text-xs px-3 py-1
+                      rounded-full
+                      border border-[#4b1b23]
+                      text-[#4b1b23]
+                      hover:bg-[#4b1b23] hover:text-white
+                      transition
+                    "
+                                    >
+                                        View
+                                    </button>
+                                </div>
                             </div>
                         </article>
                     </Link>

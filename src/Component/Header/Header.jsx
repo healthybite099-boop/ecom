@@ -80,9 +80,9 @@ export default function Header() {
           <Link href="/" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
             Home
           </Link>
-          {/* <Link href="/products" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
+          <Link href="/AllProducts" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
             Products
-          </Link> */}
+          </Link>
           <Link href="../Cart" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
             Carts
           </Link>

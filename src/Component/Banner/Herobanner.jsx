@@ -17,21 +17,21 @@ const slides = [
     title: "Fresh Fruits Delivered",
     subtitle: "100% Organic & Farm Fresh",
     image:
-      "/images/2.jpg",
+      "/images/1.png",
   },
   {
     id: 2,
     title: "Healthy & Natural",
     subtitle: "Best Quality at Best Price",
     image:
-      "/images/3.jpg",
+      "/images/1.png",
   },
   {
     id: 3,
     title: "Daily Fresh Stock",
     subtitle: "Direct From Farmers",
     image:
-      "/images/3.jpg",
+      "/images/1.png",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function Herobanner() {
     <div className="relative w-full overflow-hidden">
       <Slider {...settings}>
         {slides.map((slide) => (
-          <div key={slide.id} className="relative h-[45vh] md:h-[90vh]">
+          <div key={slide.id} className="relative h-[30vh] md:h-[90vh]">
             {/* Background Image */}
             <Image
               src={slide.image}
@@ -63,21 +63,21 @@ export default function Herobanner() {
             />
 
             {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-orange-900/20" />
+            {/* <div className="absolute inset-0 bg-orange-900/20" /> */}
 
             {/* Glass Content */}
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-7xl mx-auto px-6">
                 <div className="max-w-xl rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 md:p-10 shadow-2xl">
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
+                  <h1 className="text-3xl md:text-5xl font-extrabold text-orange-900 leading-tight">
                     {slide.title}
                   </h1>
 
-                  <p className="mt-3 text-sm md:text-lg text-white/80">
+                  <p className="mt-3 text-sm md:text-lg text-orange-900">
                     {slide.subtitle}
                   </p>
 
-                  <div className="mt-5 h-1 w-14 rounded-full bg-green-500" />
+                  <div className="mt-5 h-1 w-14 rounded-full bg-orange-900" />
                 </div>
               </div>
             </div>
