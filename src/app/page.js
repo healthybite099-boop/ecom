@@ -7,8 +7,8 @@ export default function page() {
   return (
     <>
       <Herobanner />
-      {/* <Card1/> */}
-      {/* <HomeBanner/> */}
+      <Card1/>
+      <HomeBanner/>
       {/* <Card1/> */}
 
       {/* <Products /> */}

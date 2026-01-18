@@ -9,59 +9,65 @@ const products = [
         id: 1,
         name: "Red Apples",
         brand: "Kashmir",
+        size: "500g",
         price: 180,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "red-apples",
     },
     {
         id: 2,
         name: "Bananas",
         brand: "Organic",
+        size: "500g",
         price: 90,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "bananas",
     },
     {
         id: 3,
         name: "Oranges",
         brand: "Nagpur",
+        size: "500g",
         price: 140,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "oranges",
     },
     {
         id: 4,
         name: "Grapes",
         brand: "Fresh Farm",
+        size: "500g",
         price: 120,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "grapes",
     },
     {
         id: 5,
         name: "Mango",
         brand: "Alphonso",
+        size: "500g",
         price: 260,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "mango",
     },
     {
         id: 6,
         name: "Pineapple",
         brand: "Tropical",
+        size: "500g",
         price: 110,
-        image: "/images/1.png",
+        image: "/img/1.png",
         slug: "pineapple",
     },
 ];
 
 export default function ProductSection() {
     return (
-        <section className=" mx-auto px-3 py-6">
+        <section className=" mx-auto px-3 md:py-12 py-6 bg-[#fdf9f1]">
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#3b2224]">
-                    Fresh Dry Fruits
+                <h2 className="text-xl md:text-3xl font-bold text-[#3b2224]">
+                    Our Premium Dry Fruits
                 </h2>
 
                 <Link href="/AllProducts"
@@ -82,20 +88,20 @@ export default function ProductSection() {
                 className="
           grid gap-4
           grid-cols-2
-          md:grid-cols-4
-          lg:grid-cols-6
+          md:grid-cols-2
+          lg:grid-cols-3
         "
             >
                 {products.map((item) => (
                     <Link key={item.id} href={`/Fruits/${item.slug}`}>
                         <article
                             className="
-                bg-white/60 backdrop-blur-md
-                rounded-lg border border-[#d9c7b8]
+                bg-white backdrop-blur-md
+                rounded-2xl  shadow border-[#d9c7b8]
                 overflow-hidden
-                shadow-sm
+                
                 transition-all duration-300
-                hover:shadow-md hover:-translate-y-0.5
+                hover:shadow-md hover:-translate-y-1.5
               "
                         >
                             {/* Brand */}
@@ -106,37 +112,37 @@ export default function ProductSection() {
                             </div>
 
                             {/* Image */}
-                            <div className="relative w-full aspect-[4/3] mt-2 bg-[#f5efe6]">
+                            <div className="relative  w-full h-24 md:h-64 aspect-square mt-2 ">
                                 <Image
                                     src={item.image}
                                     alt={item.name}
                                     fill
-                                    className="object-cover"
+                                    className="object-contain"
                                 />
                             </div>
 
                             {/* Content */}
                             <div className="p-2">
-                                <h3 className="text-sm font-semibold text-[#3b2224] line-clamp-1">
+                                <h3 className="text-sm md:text-xl font-semibold text-[#3b2224] line-clamp-1 text-center">
                                     {item.name}
                                 </h3>
 
-                                <div className="flex items-center justify-between mt-1">
+                                <div className="flex flex-col md:gap-4 gap-1 items-center justify-between md:mt-2">
                                     <span className="text-sm font-bold text-[#3b2224]">
-                                        ₹{item.price}
+                                        ₹{item.price} / {item.size}
                                     </span>
 
                                     <button
                                         className="
-                      text-xs px-3 py-1
+                       px-3 py-1 md:px-4 md:py-2
                       rounded-full
-                      border border-[#4b1b23]
-                      text-[#4b1b23]
-                      hover:bg-[#4b1b23] hover:text-white
-                      transition
+                      bg-[#653825]
+                      text-white
+                      font-semibold
+                      md:text-sm text-xs
                     "
                                     >
-                                        View
+                                        Add to Cart
                                     </button>
                                 </div>
                             </div>
