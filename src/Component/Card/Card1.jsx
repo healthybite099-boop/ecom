@@ -63,7 +63,7 @@ const products = [
 
 export default function ProductSection() {
     return (
-        <section className=" mx-auto px-3 md:py-12 py-6 bg-[#fdf9f1]">
+        <section className=" mx-auto px-3 md:py-36 py-12 bg-[#fdf9f1]">
             {/* Header */}
             <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl md:text-3xl font-bold text-[#3b2224]">
