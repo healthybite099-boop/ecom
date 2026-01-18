@@ -1,105 +1,95 @@
 "use client";
 
-import React from "react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-
-// slick styles (VERY IMPORTANT)
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-// 🔑 IMPORTANT: disable SSR for react-slick
-const Slider = dynamic(() => import("react-slick"), { ssr: false });
+import { useEffect, useState } from "react";
 
 const slides = [
   {
-    id: 1,
-    title: "Fresh Fruits Delivered",
-    subtitle: "100% Organic & Farm Fresh",
-    image:
-      "/images/1.png",
+    title: "Premium Dry Fruits",
+    highlight: "for Everyday Wellness",
+    desc: "Pure • Authentic • Carefully Sourced Nuts",
+    btn: "Order Now",
+    img: "/img/banner.png",
   },
   {
-    id: 2,
-    title: "Healthy & Natural",
-    subtitle: "Best Quality at Best Price",
-    image:
-      "/images/1.png",
-  },
-  {
-    id: 3,
-    title: "Daily Fresh Stock",
-    subtitle: "Direct From Farmers",
-    image:
-      "/images/1.png",
+    title: "Fresh & Hygienic",
+    highlight: "Packed with Care",
+    desc: "Quality you can trust, taste you’ll love",
+    btn: "Shop Now",
+    img: "/img/banner.png",
   },
 ];
 
 export default function Herobanner() {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 800,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3500,
-    arrows: false,
-    pauseOnHover: false,
-  };
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prev) => (prev + 1) % slides.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="relative w-full overflow-hidden">
-      <Slider {...settings}>
-        {slides.map((slide) => (
-          <div key={slide.id} className="relative h-[30vh] md:h-[90vh]">
-            {/* Background Image */}
-            <Image
-              src={slide.image}
-              alt={slide.title}
-              fill
-              unoptimized
-              className="object-cover"
-            />
+    <>
+   
+    <section className="relative border-t-2 border-[#653825] overflow-hidden bg-[#f7f3e8] md:h-[90vh] h-40">
+      {slides.map((slide, i) => (
+        <div
+        key={i}
+        className={`absolute inset-0 transition-opacity duration-700 ${
+          active === i ? "opacity-100 z-10" : "opacity-0 z-0"
+        }`}
+        >
+          <div className="mx-auto max-w-7xl md:px-6 px-2 md:py-20 grid grid-cols-2 items-center gap-10">
+            
+            
+            <div className="">
+              <h1 className="md:text-5xl text-sm font-bold text-gray-900 leading-tight">
+                {slide.title}
+                <br />
+                <span className="text-[#653825]">{slide.highlight}</span>
+              </h1>
 
-            {/* Dark Gradient Overlay */}
-            {/* <div className="absolute inset-0 bg-orange-900/20" /> */}
+              <p className="mt-4 text-gray-700 tracking-wide md:text-xl text-sm hidden md:block">
+                {slide.desc}
+              </p>
 
-            {/* Glass Content */}
-            <div className="absolute inset-0 flex items-center">
-              <div className="max-w-7xl mx-auto px-6">
-                <div className="max-w-xl rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl p-6 md:p-10 shadow-2xl">
-                  <h1 className="text-3xl md:text-5xl font-extrabold text-orange-900 leading-tight">
-                    {slide.title}
-                  </h1>
+              <a
+                href="#products"
+                className="inline-block mt-6 md:px-8 md:py-3 py-1 px-2 rounded-full bg-[#653825] text-white md:text-sm text-[12px] font-semibold shadow-md hover:scale-105 transition"
+                >
+                {slide.btn}
+              </a>
+            </div>
 
-                  <p className="mt-3 text-sm md:text-lg text-orange-900">
-                    {slide.subtitle}
-                  </p>
-
-                  <div className="mt-5 h-1 w-14 rounded-full bg-orange-900" />
-                </div>
-              </div>
+            {/* IMAGE */}
+            <div className="relative w-full md:h-80 h-36">
+              <Image
+                src={slide.img}
+                alt="Dry Fruits"
+                fill
+                className="object-contain drop-shadow-xl"
+                priority
+                />
             </div>
           </div>
-        ))}
-      </Slider>
+        </div>
+      ))}
 
-      {/* Slick Dots Styling */}
-      <style jsx global>{`
-        .slick-dots {
-          bottom: 20px;
-        }
-        .slick-dots li button:before {
-          font-size: 9px;
-          color: white;
-          opacity: 0.5;
-        }
-        .slick-dots li.slick-active button:before {
-          color: #22c55e;
-          opacity: 1;
-        }
-      `}</style>
-    </div>
+      {/* DOTS */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {slides.map((_, i) => (
+          <button
+          key={i}
+          onClick={() => setActive(i)}
+          className={`h-2 w-2 rounded-full transition ${
+            active === i ? "bg-[#653825] w-6" : "bg-gray-400"
+          }`}
+          />
+        ))}
+      </div>
+    </section>
+        </>
   );
 }

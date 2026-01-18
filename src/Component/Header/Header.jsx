@@ -1,57 +1,47 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { FaBars, FaTimes } from "react-icons/fa";
-
+import { FaBars, FaTimes, FaCartPlus, FaUser } from "react-icons/fa";
+import Image from "next/image";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm  top-0 w-full z-50">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center" aria-label="Go to Home">
-            <span className="text-2xl font-bold text-gray-800">Ecom</span>
-          </Link>
+    <header className="bg-[#f7f3e8] z-50">
+      <div className=" md:p-4 py-2 px-1">
+        <div className="grid grid-cols-3">
+          <div className=" col-span-1 flex justify-start items-center ">
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8" aria-label="Main navigation">
-            <Link href="/" className="text-gray-700 hover:text-blue-600">
-              Home
-            </Link>
-            <Link href="/AllProducts" className="text-gray-700 hover:text-blue-600">
-              Products
-            </Link>
-            <Link href="/Cart" className="text-gray-700 hover:text-blue-600">
-              Carts
-            </Link>
-            <Link href="/Aboutus" className="text-gray-700 hover:text-blue-600">
-              About
-            </Link>
-            <Link href="/Contactus" className="text-gray-700 hover:text-blue-600">
-              Contact
-            </Link>
-            <Link
-              href="/user/dashboard"
-              className="ml-4 px-3 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700"
+            <button
+              onClick={() => setIsOpen(true)}
+              className=" text-gray-700"
+              aria-label="Open menu"
             >
-              Login / Dashboard
+              <FaBars size={24} color="#653825" />
+            </button>
+          </div>
+          <div className=" col-span-1 flex justify-center items-center ">
+            <Link href="/" aria-label="Go to Home">
+              <Image src="/img/logobg.png" className="md:hidden " alt="pl" height={33} width={80} />
+              <Image src="/img/logobg.png" className="hidden md:block" alt="pl" height={46} width={110} />
             </Link>
-          </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(true)}
-            className="md:hidden text-gray-700"
-            aria-label="Open menu"
-          >
-            <FaBars size={24} />
-          </button>
+          </div>
+          <div className=" col-span-1 flex justify-end items-center gap-3 ">
+            <Link href="../Cart">
+              <FaCartPlus size={18} color="#653825" />
+            </Link>
+            <Link href="../user/dashboard">
+              <FaUser size={18} color="#653825" />
+            </Link>
+          </div>
+
+
+
         </div>
       </div>
 
-      {/* Mobile Overlay */}
+
       <div
         className={`fixed inset-0 backdrop-blur-sm bg-white/30 z-40 transition-opacity duration-300 ${isOpen ? "opacity-100 visible" : "opacity-0 invisible"
           }`}
@@ -59,47 +49,48 @@ export default function Header() {
         aria-hidden={!isOpen}
       />
 
-      {/* Mobile Sidebar */}
+
       <aside
         className={`fixed top-0 left-0 w-64 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         aria-label="Mobile menu"
       >
-        <div className="flex justify-between items-center p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800">Menu</h2>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="text-gray-700"
-            aria-label="Close menu"
-          >
-            <FaTimes size={22} />
+        <div className="flex justify-between items-center p-4 border-b border-[#653825]/30">
+          <h2 className="text-lg font-semibold text-[#653825]">Menu</h2>
+          <button onClick={() => setIsOpen(false)}>
+            <FaTimes size={22} color="#653825" />
           </button>
         </div>
 
-        <nav className="px-4 py-6 space-y-4">
-          <Link href="/" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
-            Home
-          </Link>
-          <Link href="/AllProducts" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
-            Products
-          </Link>
-          <Link href="../Cart" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
-            Carts
-          </Link>
-          <Link href="../Aboutus" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
-            About
-          </Link>
-          <Link href="../Contactus" className="block text-gray-700 hover:text-blue-600" onClick={() => setIsOpen(false)}>
-            Contact
-          </Link>
+
+        <nav className="px-4 py-6 space-y-4 text-sm font-medium">
+          {[
+            { name: "Home", link: "/" },
+            { name: "Products", link: "/AllProducts" },
+            { name: "Carts", link: "../Cart" },
+            { name: "About", link: "../Aboutus" },
+            { name: "Contact", link: "../Contactus" },
+          ].map((item, i) => (
+            <Link
+              key={i}
+              href={item.link}
+              onClick={() => setIsOpen(false)}
+              className="block text-[#653825] hover:bg-[#653825]/10 px-3 py-1 rounded-md transition"
+            >
+              {item.name}
+            </Link>
+          ))}
+
+          {/* Login Button */}
           <Link
             href="../user/dashboard"
-            className="inline-block mt-2 px-3 py-1.5 rounded-full text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700"
             onClick={() => setIsOpen(false)}
+            className="inline-block mt-4 px-4 py-2 rounded-full text-sm font-semibold bg-[#653825] text-[#f7f3e8] hover:bg-[#4e2a1c] transition"
           >
             Login / Dashboard
           </Link>
         </nav>
+
       </aside>
     </header>
   );

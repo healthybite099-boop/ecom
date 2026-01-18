@@ -59,22 +59,22 @@ export default function ProductSection() {
     return (
         <section className=" mx-auto px-3 py-6">
             {/* Header */}
-           <div className="mb-4 flex items-center justify-between">
-  <h2 className="text-2xl md:text-3xl font-bold text-[#3b2224]">
-    Fresh Dry Fruits
-  </h2>
+            <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#3b2224]">
+                    Fresh Dry Fruits
+                </h2>
 
-  <button
-    className="
+                <Link href="/AllProducts"
+                    className="
       text-sm md:text-base font-semibold
       text-[#4b1b23]
       hover:underline
       transition
     "
-  >
-    View All →
-  </button>
-</div>
+                >
+                    View All →
+                </Link>
+            </div>
 
 
             {/* Grid */}
