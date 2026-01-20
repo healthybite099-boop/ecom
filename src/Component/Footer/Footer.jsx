@@ -49,7 +49,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-gray-900">
+                <Link href="/t&c" className="text-gray-600 hover:text-gray-900">
                   Terms & Conditions
                 </Link>
               </li>
