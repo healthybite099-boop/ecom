@@ -9,14 +9,14 @@ const slides = [
     highlight: "for Everyday Wellness",
     desc: "Pure • Authentic • Carefully Sourced Nuts",
     btn: "Order Now",
-    img: "/img/banner.png",
+    img: "/img/oo.png",
   },
   {
     title: "Fresh & Hygienic",
     highlight: "Packed with Care",
     desc: "Quality you can trust, taste you’ll love",
     btn: "Shop Now",
-    img: "/img/banner.png",
+    img: "/img/oo.png",
   },
 ];
 
@@ -40,38 +40,12 @@ export default function Herobanner() {
             className={`absolute inset-0 transition-opacity duration-700 ${active === i ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
           >
-            <div className="mx-auto max-w-7xl md:px-6 px-2 md:py-20 grid grid-cols-2 items-center gap-10">
+            <div className="mx-auto max-w-7xl md:px-6 px-2 md:py-20 grid grid-cols-2 items-center gap-10 ralative">
 
-
-              <div className="">
-                <h1 className="md:text-5xl text-sm font-bold text-gray-900 leading-tight">
-                  {slide.title}
-                  <br />
-                  <span className="text-[#653825]">{slide.highlight}</span>
-                </h1>
-
-                <p className="mt-4 text-gray-700 tracking-wide md:text-xl text-sm hidden md:block">
-                  {slide.desc}
-                </p>
-
-                <a
-                  href="#products"
-                  className="inline-block mt-6 md:px-8 md:py-3 py-1 px-2 rounded-full bg-[#653825] text-white md:text-sm text-[12px] font-semibold shadow-md hover:scale-105 transition"
-                >
-                  {slide.btn}
-                </a>
-              </div>
-
-              {/* IMAGE */}
-              <div className="relative w-full md:h-80 h-36">
-                <Image
-                  src={slide.img}
-                  alt="Dry Fruits"
-                  fill
-                  className="object-contain drop-shadow-xl"
-                  priority
-                />
-              </div>
+              <Image src={slide.img}
+                alt="qqwer"
+                fill
+              />
             </div>
           </div>
         ))}
