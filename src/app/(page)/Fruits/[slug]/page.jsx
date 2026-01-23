@@ -152,7 +152,7 @@ export default function ProductPage() {
   const inStock = isAvailable && stock > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/80 via-white to-white pb-12">
+    <div className="min-h-screen  pb-12">
       {/* TOP BAR */}
       <div className="border-b border-amber-100/70 bg-white/80 backdrop-blur sticky top-0 z-20">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
@@ -174,43 +174,41 @@ export default function ProductPage() {
       </div>
 
       {/* MAIN */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 md:py-6 py-2">
         {/** KEY CHANGE: Use single column by default, switch to two columns at md */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           {/* LEFT: Large image + thumbs */}
           <div>
             <div
-              className="relative rounded-2xl overflow-hidden bg-amber-50/80 shadow-lg border border-amber-100"
-              style={{ minHeight: 620 }}
+              className="relative aspect-square rounded-2xl overflow-hidden bg-[#f7f3e8] shadow-lg border border-amber-100"
+
             >
               <Image
                 src={mainImage ? `${mainImage}` : "/placeholder.png"}
                 alt={name}
                 fill
                 priority
-                className="object-cover"
+                className="object-contain"
               />
             </div>
 
             {images.length > 1 && (
-              <div className="mt-4 flex items-center gap-3">
+              <div className="mt-2 flex items-center gap-3">
                 <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-transparent">
                   {images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setMainImage(img)}
-                      className={`flex-shrink-0 rounded-md p-1 transition border ${
-                        (mainImage || images[0]) === img
-                          ? "ring-2 ring-amber-300 border-amber-200"
-                          : "border-transparent hover:ring-1 hover:ring-amber-100"
-                      }`}
+                      className={`shrink-0  rounded-md p-1 aspect-square  w-20 m-1  relative transition border ${(mainImage || images[0]) === img
+                        ? "ring-2 ring-[#f7f3e8] border-[#f7f3e8]"
+                        : "border-transparent hover:ring-1 hover:ring-amber-100 mask-b-from-amber-100"
+                        }`}
                     >
                       <Image
-                        width={84}
-                        height={84}
+                        fill
                         src={img}
                         alt={`${name} ${i + 1}`}
-                        className="w-20 h-20 rounded-md object-cover"
+                        className="rounded-md object-contain"
                       />
                     </button>
                   ))}
@@ -219,20 +217,18 @@ export default function ProductPage() {
             )}
           </div>
 
-          {/* RIGHT: summary, price, CTA */}
-          {/* sticky applied from md and up */}
-          <aside className="md:sticky md:top-24">
-            <div className="mb-4">
-              <p className="inline-flex items-center text-[11px] uppercase tracking-[0.2em] text-amber-800 bg-amber-50/80 px-3 py-1 rounded-full border border-amber-100 shadow-sm">
-                Premium Dry Fruit
+
+          <aside className="md:sticky md:top-20">
+            <div className="md:mb-4">
+              <p className="inline-flex items-center text-[11px] uppercase tracking-[0.2em] text-[#653825] bg-[#f7f3e8] m-0 px-3 py-1 font-semibold rounded-full border border-amber-100 shadow-sm">
+                WOWNUTT
               </p>
 
-              <h1 className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900">
+              <h1 className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#653825]">
                 {name}
               </h1>
 
               <div className="flex items-center gap-3 mt-3 text-sm text-slate-600">
-                {brand && <span className="uppercase font-medium">{brand}</span>}
                 {rating > 0 && (
                   <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-100">
                     <Star className="w-3 h-3" />
@@ -246,7 +242,7 @@ export default function ProductPage() {
             <div className="border-t border-b border-amber-100/70 py-4 mb-4">
               <div className="flex items-center gap-4">
                 <div>
-                  <div className="text-3xl font-bold text-emerald-700">₹{displayPrice}</div>
+                  <div className="text-3xl font-bold text-[#653825]">₹{displayPrice}</div>
                   {discountPercentage > 0 && (
                     <div className="flex items-center gap-3 mt-1">
                       <span className="text-sm text-slate-400 line-through">₹{price}</span>
@@ -260,9 +256,9 @@ export default function ProductPage() {
 
             <div className="space-y-4 mb-6">
               <div className="flex items-center gap-3">
-                <label className="text-sm text-slate-600 min-w-[90px]">Quantity</label>
+                <label className="text-sm text-slate-600 ">Quantity</label>
 
-                <div className="inline-flex items-center border rounded-2xl px-3 py-1.5 gap-4">
+                <div className="inline-flex items-center border border-[#f7f3e8] rounded-2xl px-3 py-1.5 gap-4">
                   <button
                     onClick={() => setQty((q) => Math.max(1, q - 1))}
                     className="w-8 h-8 rounded-md text-lg flex items-center justify-center hover:bg-amber-50 transition"
@@ -285,9 +281,8 @@ export default function ProductPage() {
                 <button
                   onClick={handleAddToCart}
                   disabled={!inStock || cartLoading}
-                  className={`w-full py-3 rounded-full text-sm font-semibold transition shadow-sm ${
-                    inStock && !cartLoading ? "bg-white border-2 border-amber-800 text-amber-800 hover:shadow-md" : "bg-slate-100 text-slate-500 cursor-not-allowed"
-                  }`}
+                  className={`w-full py-3 rounded-full text-sm font-semibold transition shadow-sm ${inStock && !cartLoading ? "bg-white border-2 border-[#653825] text-[#653825] cursor-pointer hover:shadow-md" : "bg-slate-100 text-slate-500 cursor-not-allowed"
+                    }`}
                 >
                   {inStock ? (cartLoading ? "Adding..." : "Add to cart") : "Out of Stock"}
                 </button>
@@ -295,14 +290,14 @@ export default function ProductPage() {
                 <button
                   onClick={handleBuyNow}
                   disabled={!inStock || cartLoading}
-                  className="w-full py-3 rounded-full text-sm font-semibold bg-amber-800 text-white hover:bg-amber-900 transition disabled:opacity-60"
+                  className="w-full py-3 rounded-full text-sm font-semibold bg-[#653825] text-white cursor-pointer hover:bg-amber-900 transition disabled:opacity-60"
                 >
                   Buy now
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 text-xs text-slate-600">
+            <div className="grid grid-cols-2 gap-3 text-xs text-slate-600">
               <div className="flex items-start gap-2">
                 <Truck className="w-5 h-5 text-amber-700" />
                 <div>
@@ -317,20 +312,14 @@ export default function ProductPage() {
                   <div className="text-xs">Premium grade</div>
                 </div>
               </div>
-              <div className="flex items-start gap-2">
-                <div className={`h-3 w-3 rounded-full ${inStock ? "bg-emerald-500" : "bg-red-500"} mt-1`} />
-                <div>
-                  <div className="font-semibold text-slate-800 text-sm">{inStock ? `In stock • ${stock}` : "Out of stock"}</div>
-                  <div className="text-xs">Availability</div>
-                </div>
-              </div>
+              
             </div>
           </aside>
         </div>
 
         {/* BOTTOM: description & details */}
         <div className="mt-8 grid lg:grid-cols-[1.6fr,1fr] gap-6">
-          <div className="bg-white/95 rounded-3xl shadow-sm p-6 border border-amber-100">
+          <div className="bg-white/95 rounded-3xl shadow-sm p-6 border border-[#653825]">
             <h2 className="text-lg font-semibold mb-3">About this product</h2>
             <p className="text-sm text-slate-700 leading-relaxed">
               {description || "Detailed description will be available soon."}
@@ -349,11 +338,10 @@ export default function ProductPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-white/95 rounded-3xl shadow-sm p-4 border border-amber-100">
+            <div className="bg-white/95 rounded-3xl shadow-sm p-4 border border-[#653825]">
               <h3 className="font-semibold mb-2">Key details</h3>
               <dl className="text-sm text-slate-700 space-y-2">
                 {brand && <div className="flex justify-between"><dt className="text-slate-500">Brand</dt><dd className="font-medium">{brand}</dd></div>}
-                {category && <div className="flex justify-between"><dt className="text-slate-500">Category</dt><dd className="font-medium capitalize">{category}</dd></div>}
                 {weight && <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="font-medium">{weight} g</dd></div>}
                 {shelfLife && <div className="flex justify-between"><dt className="text-slate-500">Shelf life</dt><dd className="font-medium">{shelfLife}</dd></div>}
                 {originCountry && <div className="flex justify-between"><dt className="text-slate-500">Origin</dt><dd className="font-medium">{originCountry}</dd></div>}
