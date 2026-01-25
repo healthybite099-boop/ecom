@@ -41,7 +41,7 @@ export async function GET(req) {
     const [products, totalItems] = await Promise.all([
       ProductModel.find(filter, {
         name: 1,
-        images: 1,
+        images: { $slice: 1 },
         slug: 1,
         brand: 1,
         price: 1,

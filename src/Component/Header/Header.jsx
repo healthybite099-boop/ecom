@@ -8,7 +8,7 @@ export default function Header() {
 
   return (
     <header className="bg-[#f7f3e8] z-50">
-      <div className=" md:p-4 py-2 px-1">
+      <div className=" md:p-4 py-2 px-4">
         <div className="grid grid-cols-3">
           <div className=" col-span-1 flex justify-start items-center ">
 
@@ -68,8 +68,10 @@ export default function Header() {
             { name: "Home", link: "/" },
             { name: "Products", link: "/AllProducts" },
             { name: "Carts", link: "../Cart" },
-            { name: "About", link: "../Aboutus" },
-            { name: "Contact", link: "../Contactus" },
+            { name: "About Us", link: "../Aboutus" },
+            { name: "Privacy Policy", link: "../privacy-policy" },
+            { name: "Refund Policy", link: "../refund-policy" },
+            { name: "Terms & Condition", link: "../t&c" },
           ].map((item, i) => (
             <Link
               key={i}
