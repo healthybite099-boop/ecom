@@ -4,9 +4,20 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Star, Truck, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Star, Truck, ShieldCheck, ChevronRight, Info, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+
+// Swiper Imports
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Thumbs, FreeMode } from "swiper/modules";
+
+// Swiper Styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/thumbs";
+import "swiper/css/free-mode";
 
 function getOrCreateUserId() {
   if (typeof window === "undefined") return "";
@@ -26,7 +37,7 @@ export default function ProductPage() {
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [mainImage, setMainImage] = useState("");
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [userId, setUserId] = useState("");
   const [cartLoading, setCartLoading] = useState(false);
   const [qty, setQty] = useState(1);
@@ -35,46 +46,32 @@ export default function ProductPage() {
   useEffect(() => {
     if (status === "authenticated") {
       const realUserId = session?.user?.id || session?.user?._id || "";
-      if (realUserId) {
-        setUserId(realUserId);
-        return;
-      }
+      if (realUserId) { setUserId(realUserId); return; }
     }
-
-    const id = getOrCreateUserId();
-    setUserId(id);
+    setUserId(getOrCreateUserId());
   }, [session, status]);
 
   useEffect(() => {
     if (!slug) return;
-
     const fetchProduct = async () => {
       try {
         const res = await axios.get(`/api/products/single/${slug}`);
-        const data = res.data?.data;
-        setProduct(data || null);
-
-        if (data?.images?.[0]) {
-          setMainImage(data.images[0]);
-        }
+        setProduct(res.data?.data || null);
       } catch (error) {
         console.error("Product fetch error:", error);
-        setProduct(null);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProduct();
   }, [slug]);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (redirectToCart = true) => {
     if (status !== "authenticated") {
       setShowAuthPopup(true);
       return;
     }
-
-    if (!product || !product._id || !userId) return;
+    if (!product?._id || !userId) return;
     try {
       setCartLoading(true);
       await axios.post("/api/cart", {
@@ -82,316 +79,186 @@ export default function ProductPage() {
         productId: product._id,
         quantity: qty,
       });
-      setCartLoading(false);
-      router.push("/Cart");
+      if (redirectToCart) router.push("/Cart");
     } catch (error) {
       console.error("Add to cart error:", error);
+    } finally {
       setCartLoading(false);
     }
   };
 
-  const handleBuyNow = async () => {
-    await handleAddToCart();
-  };
+  if (loading) return (
+    <div className="min-h-screen bg-[#fdf9f1] flex items-center justify-center">
+      <div className="w-12 h-12 border-4 border-amber-900 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-amber-50/40 flex items-center justify-center p-8">
-        <div className="w-full max-w-6xl animate-pulse space-y-4">
-          <div className="h-12 bg-amber-100 rounded" />
-          <div className="h-96 bg-amber-100 rounded-2xl" />
-        </div>
-      </div>
-    );
-  }
+  if (!product) return <div className="text-center py-20 text-[#653825]">Product not found.</div>;
 
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-amber-50/80 via-white to-white flex items-center justify-center px-4">
-        <div className="bg-white/95 shadow-lg rounded-3xl p-8 text-center max-w-md mx-auto border border-amber-100">
-          <p className="text-lg font-semibold text-red-500 mb-2">Product not found</p>
-          <p className="text-slate-500 mb-6 text-sm">
-            The product you are looking for does not exist or has been removed.
-          </p>
-          <button
-            onClick={() => router.back()}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-amber-200 text-sm bg-amber-50/70 hover:bg-amber-100 transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const {
-    name,
-    type,
-    brand,
-    category,
-    price = 0,
-    finalPrice,
-    discountPercentage = 0,
-    weight,
-    packagingType,
-    shelfLife,
-    originCountry,
-    qualityGrade,
-    nutrition,
-    images = [],
-    description,
-    rating = 0,
-    reviewsCount = 0,
-    tags = [],
-    stock = 0,
-    isAvailable = false,
-  } = product;
-
-  const displayPrice = finalPrice || price;
-  const inStock = isAvailable && stock > 0;
+  const inStock = product.isAvailable && product.stock > 0;
 
   return (
-    <div className="min-h-screen  pb-12">
-      {/* TOP BAR */}
-      <div className="border-b border-amber-100/70 bg-white/80 backdrop-blur sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 text-xs sm:text-sm text-slate-700">
-            <button
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-1 hover:text-amber-800 transition"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
-            </button>
-            <div className="hidden sm:flex items-center gap-1 text-slate-400">
-              <Link href="/">Home</Link>
-              <span>/</span>
-              <Link href="/products">Products</Link>
-            </div>
+    <div className="min-h-screen bg-[#fdf9f1] pb-12">
+      {/* STICKY NAV */}
+      <nav className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-amber-100">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <button onClick={() => router.back()} className="flex items-center gap-2 text-[#653825] font-semibold hover:opacity-70 transition">
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back</span>
+          </button>
+          <div className="hidden md:flex items-center gap-2 text-xs font-medium text-slate-400 uppercase tracking-widest">
+            <Link href="/" className="hover:text-amber-800">Home</Link>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-[#653825]">{product.name}</span>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* MAIN */}
-      <div className="max-w-6xl mx-auto px-4 md:py-6 py-2">
-        {/** KEY CHANGE: Use single column by default, switch to two columns at md */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          {/* LEFT: Large image + thumbs */}
-          <div>
-            <div
-              className="relative aspect-square rounded-2xl overflow-hidden bg-[#f7f3e8] shadow-lg border border-amber-100"
-
-            >
-              <Image
-                src={mainImage ? `${mainImage}` : "/placeholder.png"}
-                alt={name}
-                fill
-                priority
-                className="object-contain"
-              />
+      <main className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          
+          {/* LEFT: TOUCH SLIDER (5 Columns) */}
+          <div className="lg:col-span-5 space-y-4 overflow-hidden">
+            <div className="relative rounded-[2.5rem] overflow-hidden bg-white shadow-xl shadow-amber-900/5 border border-amber-100">
+              <Swiper
+                spaceBetween={10}
+                navigation={false}
+                pagination={{ clickable: true }}
+                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                modules={[FreeMode, Navigation, Thumbs, Pagination]}
+                className="aspect-square group"
+              >
+                {product.images?.map((img, i) => (
+                  <SwiperSlide key={i} className="flex items-center justify-center p-6 md:p-12">
+                    <div className="relative w-full h-full transform group-hover:scale-105 transition-transform duration-700">
+                      <Image src={img} alt={product.name} fill priority className="object-contain" />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              {product.discountPercentage > 0 && (
+                <div className="absolute top-6 left-6 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                  {product.discountPercentage}% Off
+                </div>
+              )}
             </div>
 
-            {images.length > 1 && (
-              <div className="mt-2 flex items-center gap-3">
-                <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-amber-300 scrollbar-track-transparent">
-                  {images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setMainImage(img)}
-                      className={`shrink-0  rounded-md p-1 aspect-square  w-20 m-1  relative transition border ${(mainImage || images[0]) === img
-                        ? "ring-2 ring-[#f7f3e8] border-[#f7f3e8]"
-                        : "border-transparent hover:ring-1 hover:ring-amber-100 mask-b-from-amber-100"
-                        }`}
-                    >
-                      <Image
-                        fill
-                        src={img}
-                        alt={`${name} ${i + 1}`}
-                        className="rounded-md object-contain"
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Thumbnail Track */}
+            <Swiper
+              onSwiper={setThumbsSwiper}
+              spaceBetween={12}
+              slidesPerView={4}
+              freeMode={true}
+              watchSlidesProgress={true}
+              modules={[FreeMode, Navigation, Thumbs]}
+              className="px-1"
+            >
+              {product.images?.map((img, i) => (
+                <SwiperSlide key={i} className="cursor-pointer">
+                  <div className="relative aspect-square rounded-2xl bg-white border-2 border-transparent transition-all overflow-hidden swiper-thumb-active:border-[#653825]">
+                    <Image src={img} fill alt="thumb" className="object-contain p-2" />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
 
+          {/* RIGHT: CONTENT (7 Columns) */}
+          <div className="lg:col-span-7 space-y-6">
+            <div>
+              <span className="inline-block bg-[#653825]/10 text-[#653825] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-3">
+                {product.brand || "WOWNUTT Premium"}
+              </span>
+              <h1 className="text-3xl md:text-5xl font-bold text-[#3b2224] mb-2">{product.name}</h1>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 text-amber-500 font-bold">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>{product.rating || "4.9"}</span>
+                </div>
+                <span className="text-slate-400 text-sm">({product.reviewsCount || "0"} Reviews)</span>
+              </div>
+            </div>
 
-          <aside className="md:sticky md:top-20">
-            <div className="md:mb-4">
-              <p className="inline-flex items-center text-[11px] uppercase tracking-[0.2em] text-[#653825] bg-[#f7f3e8] m-0 px-3 py-1 font-semibold rounded-full border border-amber-100 shadow-sm">
-                WOWNUTT
-              </p>
-
-              <h1 className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#653825]">
-                {name}
-              </h1>
-
-              <div className="flex items-center gap-3 mt-3 text-sm text-slate-600">
-                {rating > 0 && (
-                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-100">
-                    <Star className="w-3 h-3" />
-                    <strong>{rating.toFixed(1)}</strong>
-                    <span className="text-slate-400 ml-1">({reviewsCount})</span>
-                  </span>
+            <div className="p-6 bg-white rounded-3xl border border-amber-100 shadow-sm">
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl font-black text-[#653825]">₹{product.finalPrice || product.price}</span>
+                {product.discountPercentage > 0 && (
+                  <span className="text-xl text-slate-300 line-through">₹{product.price}</span>
                 )}
               </div>
+              <p className="text-[10px] text-slate-400 uppercase mt-2 font-bold tracking-tighter">Tax included • Free Shipping on ₹500+</p>
             </div>
 
-            <div className="border-t border-b border-amber-100/70 py-4 mb-4">
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className="text-3xl font-bold text-[#653825]">₹{displayPrice}</div>
-                  {discountPercentage > 0 && (
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className="text-sm text-slate-400 line-through">₹{price}</span>
-                      <span className="px-2 py-1 rounded-full bg-red-50 text-red-600 text-xs font-semibold border border-red-100">{discountPercentage}% OFF</span>
-                    </div>
-                  )}
-                  <div className="text-xs text-slate-500 mt-1">Inclusive of all taxes</div>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center bg-white border border-amber-100 rounded-2xl p-1 shadow-sm">
+                <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-12 h-12 flex items-center justify-center hover:bg-amber-50 rounded-xl text-2xl font-bold text-[#653825]"> – </button>
+                <span className="w-12 text-center font-bold text-lg">{qty}</span>
+                <button onClick={() => setQty(q => q + 1)} className="w-12 h-12 flex items-center justify-center hover:bg-amber-50 rounded-xl text-2xl font-bold text-[#653825]"> + </button>
               </div>
+
+              <button 
+                onClick={() => handleAddToCart(true)}
+                disabled={!inStock || cartLoading}
+                className="flex-1 h-14 bg-[#653825] text-white rounded-2xl font-bold text-lg hover:bg-amber-900 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-900/20"
+              >
+                <ShoppingBag className="w-5 h-5" />
+                {cartLoading ? "Adding..." : "Buy Now"}
+              </button>
             </div>
 
-            <div className="space-y-4 mb-6">
-              <div className="flex items-center gap-3">
-                <label className="text-sm text-slate-600 ">Quantity</label>
-
-                <div className="inline-flex items-center border border-[#f7f3e8] rounded-2xl px-3 py-1.5 gap-4">
-                  <button
-                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    className="w-8 h-8 rounded-md text-lg flex items-center justify-center hover:bg-amber-50 transition"
-                    aria-label="decrease"
-                  >
-                    −
-                  </button>
-                  <div className="min-w-[36px] text-center font-medium">{qty}</div>
-                  <button
-                    onClick={() => setQty((q) => q + 1)}
-                    className="w-8 h-8 rounded-md text-lg flex items-center justify-center hover:bg-amber-50 transition"
-                    aria-label="increase"
-                  >
-                    +
-                  </button>
-                </div>
+            {/* Badges */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-2xl border border-white">
+                <Truck className="text-amber-700 w-6 h-6" />
+                <span className="text-sm font-bold text-slate-700">Fast Delivery (2-3 Days)</span>
               </div>
-
-              <div className="space-y-2">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!inStock || cartLoading}
-                  className={`w-full py-3 rounded-full text-sm font-semibold transition shadow-sm ${inStock && !cartLoading ? "bg-white border-2 border-[#653825] text-[#653825] cursor-pointer hover:shadow-md" : "bg-slate-100 text-slate-500 cursor-not-allowed"
-                    }`}
-                >
-                  {inStock ? (cartLoading ? "Adding..." : "Add to cart") : "Out of Stock"}
-                </button>
-
-                <button
-                  onClick={handleBuyNow}
-                  disabled={!inStock || cartLoading}
-                  className="w-full py-3 rounded-full text-sm font-semibold bg-[#653825] text-white cursor-pointer hover:bg-amber-900 transition disabled:opacity-60"
-                >
-                  Buy now
-                </button>
+              <div className="flex items-center gap-3 p-4 bg-white/50 rounded-2xl border border-white">
+                <ShieldCheck className="text-emerald-700 w-6 h-6" />
+                <span className="text-sm font-bold text-slate-700">100% Quality Assurance</span>
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs text-slate-600">
-              <div className="flex items-start gap-2">
-                <Truck className="w-5 h-5 text-amber-700" />
-                <div>
-                  <div className="font-semibold text-slate-800 text-sm">Fast Delivery</div>
-                  <div className="text-xs">Dispatch 1–2 days</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <ShieldCheck className="w-5 h-5 text-emerald-700" />
-                <div>
-                  <div className="font-semibold text-slate-800 text-sm">Quality Assured</div>
-                  <div className="text-xs">Premium grade</div>
-                </div>
-              </div>
-              
-            </div>
-          </aside>
-        </div>
-
-        {/* BOTTOM: description & details */}
-        <div className="mt-8 grid lg:grid-cols-[1.6fr,1fr] gap-6">
-          <div className="bg-white/95 rounded-3xl shadow-sm p-6 border border-[#653825]">
-            <h2 className="text-lg font-semibold mb-3">About this product</h2>
-            <p className="text-sm text-slate-700 leading-relaxed">
-              {description || "Detailed description will be available soon."}
-            </p>
-
-            {tags.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, i) => (
-                    <span key={i} className="px-2 py-1 rounded-full bg-slate-100 text-xs text-slate-700">#{tag}</span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            <div className="bg-white/95 rounded-3xl shadow-sm p-4 border border-[#653825]">
-              <h3 className="font-semibold mb-2">Key details</h3>
-              <dl className="text-sm text-slate-700 space-y-2">
-                {brand && <div className="flex justify-between"><dt className="text-slate-500">Brand</dt><dd className="font-medium">{brand}</dd></div>}
-                {weight && <div className="flex justify-between"><dt className="text-slate-500">Weight</dt><dd className="font-medium">{weight} g</dd></div>}
-                {shelfLife && <div className="flex justify-between"><dt className="text-slate-500">Shelf life</dt><dd className="font-medium">{shelfLife}</dd></div>}
-                {originCountry && <div className="flex justify-between"><dt className="text-slate-500">Origin</dt><dd className="font-medium">{originCountry}</dd></div>}
-              </dl>
-            </div>
-
-            <div className="bg-white rounded-3xl shadow-sm p-4 border border-slate-100">
-              <h3 className="font-semibold mb-2">Customer reviews</h3>
-              <p className="text-sm text-slate-500">Review system can be integrated later. Currently showing <strong>{rating}</strong>★ from <strong>{reviewsCount}</strong> ratings.</p>
             </div>
           </div>
         </div>
-      </div>
 
+        {/* BOTTOM SECTION */}
+        <div className="mt-16 grid lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-6">
+            <h3 className="text-xl font-bold text-[#3b2224] flex items-center gap-2">
+              <Info className="w-5 h-5" /> About the product
+            </h3>
+            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-amber-100 text-slate-600 leading-relaxed">
+              {product.description}
+            </div>
+          </div>
+          <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-amber-100 h-fit">
+            <h3 className="font-bold text-[#3b2224] mb-4">Quick Specs</h3>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between border-b pb-2"><span className="text-slate-400">Weight</span><span className="font-bold text-[#653825]">{product.weight}g</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-slate-400">Shelf Life</span><span className="font-bold text-[#653825]">{product.shelfLife}</span></div>
+              <div className="flex justify-between border-b pb-2"><span className="text-slate-400">Packaging</span><span className="font-bold text-[#653825]">{product.packagingType}</span></div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Auth Popup */}
       {showAuthPopup && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
-            <h2 className="text-lg font-semibold mb-2 text-slate-900">Login required</h2>
-            <p className="text-sm text-slate-600 mb-4">
-              Please login or sign up with your mobile number to continue.
-            </p>
-            <div className="space-y-2">
-              <button
-                onClick={() => {
-                  setShowAuthPopup(false);
-                  router.push("/login");
-                }}
-                className="w-full py-2.5 rounded-full text-sm font-semibold bg-amber-800 text-white hover:bg-amber-900 transition"
-              >
-                Login
-              </button>
-              <button
-                onClick={() => {
-                  setShowAuthPopup(false);
-                  router.push("/register");
-                }}
-                className="w-full py-2.5 rounded-full text-sm font-semibold border border-amber-800 text-amber-800 bg-white hover:bg-amber-50 transition"
-              >
-                Sign up
-              </button>
-              <button
-                onClick={() => setShowAuthPopup(false)}
-                className="w-full py-2 rounded-full text-xs text-slate-500 hover:text-slate-700"
-              >
-                Continue browsing
-              </button>
-            </div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#3b2224]/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-sm text-center shadow-2xl">
+            <h2 className="text-2xl font-bold text-[#3b2224] mb-4">Login to continue</h2>
+            <button onClick={() => router.push("/login")} className="w-full py-4 bg-[#653825] text-white rounded-2xl font-bold mb-3">Login</button>
+            <button onClick={() => setShowAuthPopup(false)} className="text-slate-400 font-medium">Cancel</button>
           </div>
         </div>
       )}
+
+      {/* Global CSS for Swiper Customization */}
+      <style jsx global>{`
+        .swiper-button-next, .swiper-button-prev { color: #653825 !important; background: white; width: 35px !important; height: 35px !important; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .swiper-button-next:after, .swiper-button-prev:after { font-size: 14px !important; font-weight: 800; }
+        .swiper-pagination-bullet-active { background: #653825 !important; }
+        .swiper-slide-thumb-active div { border-color: #653825 !important; }
+      `}</style>
     </div>
   );
 }
