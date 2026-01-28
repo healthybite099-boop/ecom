@@ -45,7 +45,7 @@ export default function Products() {
         if (append) setIsLoadingMore(true);
         else setLoading(true);
 
-        const res = await axios.get("/api/products/showhome", {
+        const res = await axios.get("/api/products/allcategory", {
           params: {
             page: pageToLoad,
             limit: 12,
