@@ -4,30 +4,23 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 export default function Register() {
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
+    name: "", email: "", phone: "", password: "", confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
-
   const isFormValid = () => {
     return (
       formData.name.trim() !== "" &&
       formData.email.trim() !== "" &&
-      formData.phone.trim() !== "" &&
+      formData.phone.length > 10 && 
       formData.password.trim() !== "" &&
       formData.password === formData.confirmPassword
     );
@@ -35,163 +28,102 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormValid()) return;
-
     setLoading(true);
     setError("");
     setSuccess("");
 
     try {
-      const res = await axios.post("/api/user/create", {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        password: formData.password,
-        usertype: "1",
-      });
-
-      if (!res.data?.success) {
-        setError(res.data?.message || "Registration failed");
-        setLoading(false);
-        return;
-      }
-
-      setSuccess("Registered successfully. You can now login.");
-      setTimeout(() => {
-        router.push("/login");
-      }, 1200);
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data?.message || "Server error during registration");
+      const res = await axios.post("/api/user/create", { ...formData, usertype: "1" });
+      if (res.data?.success) {
+        setSuccess("Account created! Redirecting to login...");
+        setTimeout(() => router.push("/login"), 1500);
       } else {
-        setError("Something went wrong. Please try again.");
+        setError(res.data?.message || "Registration failed");
       }
+    } catch (err) {
+      setError(err.response?.data?.message || "An error occurred");
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-slate-100 flex justify-center items-center min-h-screen relative">
-      <div className="absolute inset-0 bg-opacity-50 backdrop-blur-sm"></div>
+    <div className="bg-[#f8fafc] flex justify-center items-center min-h-screen p-4">
+      {/* Aesthetic Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-[#2d2849]"></div>
 
-      <div className="relative z-30 bg-white p-8 sm:p-10 rounded-xl shadow-2xl max-w-md w-full">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">
-          Create Account
-        </h2>
+      <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-xl max-w-md w-full border border-gray-100">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-[#2d2849]">Join Us</h2>
+          <p className="text-gray-500 mt-2">Create your account to get started</p>
+        </div>
+        
+        {error && <div className="mb-4 p-3 bg-red-50 text-xs text-red-600 rounded-lg text-center border border-red-100">{error}</div>}
+        {success && <div className="mb-4 p-3 bg-emerald-50 text-xs text-emerald-600 rounded-lg text-center border border-emerald-100">{success}</div>}
 
-        {error && (
-          <div className="mb-4 text-sm text-red-600 text-center">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="mb-4 text-sm text-emerald-600 text-center">
-            {success}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
-              Full Name
-            </label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-600 uppercase ml-1">Full Name</label>
             <input
-              id="name"
               type="text"
-              value={formData.name}
-              onChange={handleChange}
-              disabled={loading}
-              placeholder="Enter your name"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              required
+              placeholder="John Doe"
+              className="w-full px-4 py-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-[#2d2849] focus:bg-white outline-none transition-all"
+              onChange={(e) => setFormData({...formData, name: e.target.value})}
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phone">
-              Mobile Number
-            </label>
+          
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-600 uppercase ml-1">Email</label>
             <input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={handleChange}
-              disabled={loading}
-              placeholder="Enter your mobile number"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
               type="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={loading}
-              placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              required
+              placeholder="name@company.com"
+              className="w-full px-4 py-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-[#2d2849] focus:bg-white outline-none transition-all"
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={loading}
-              placeholder="Create a password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              required
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-gray-600 uppercase ml-1">Phone Number</label>
+            <PhoneInput
+              country={"in"}
+              value={formData.phone}
+              onChange={(phone) => setFormData({ ...formData, phone })}
+              inputStyle={{ width: '100%', height: '44px', borderRadius: '12px', border: '1px solid #e5e7eb', backgroundColor: '#f9fafb' }}
+              buttonStyle={{ borderRadius: '12px 0 0 12px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb' }}
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="confirmPassword">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              disabled={loading}
-              placeholder="Re-enter password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              required
-            />
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">Passwords do not match.</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-600 uppercase ml-1">Password</label>
+              <input
+                type="password"
+                placeholder="••••••"
+                className="w-full px-4 py-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-[#2d2849] focus:bg-white outline-none transition-all"
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-semibold text-gray-600 uppercase ml-1">Confirm</label>
+              <input
+                type="password"
+                placeholder="••••••"
+                className="w-full px-4 py-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-[#2d2849] focus:bg-white outline-none transition-all"
+                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+              />
+            </div>
           </div>
 
           <button
             type="submit"
             disabled={!isFormValid() || loading}
-            className={`w-full py-2.5 px-4 rounded-lg shadow-lg text-sm font-semibold transition ${
-              isFormValid() && !loading
-                ? "bg-amber-800 text-white hover:bg-amber-900"
-                : "bg-gray-300 text-gray-600 cursor-not-allowed"
-            }`}
+            className="w-full mt-4 py-3 bg-[#2d2849] text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-[#1f1b33] disabled:bg-gray-300 transform active:scale-95 transition-all"
           >
-            {loading ? "Creating account..." : "Sign up"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
-
-        <p className="mt-4 text-xs text-center text-gray-500">
-          Already have an account?{" "}
-          <Link href="/login" className="text-amber-700 hover:underline">
-            Login
-          </Link>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Already have an account? <Link href="/login" className="text-amber-700 font-bold hover:underline">Sign In</Link>
         </p>
       </div>
     </div>

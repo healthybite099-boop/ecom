@@ -8,60 +8,49 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
-      credentials: {},
-
+      credentials: {
+        phone: { label: "Phone", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
       async authorize(credentials) {
-        const { email, password } = credentials;
         try {
           await dbConnect();
-          const admin = await UserModel.findOne({ email });
+          const user = await UserModel.findOne({ phone: credentials.phone });
 
-          if (!admin) {
-            return null;
-          }
+          if (!user) return null;
 
-          const passwordMatch = await bcrypt.compare(password, admin.password);
-
-          if (!passwordMatch) {
-            return null;
-          }
+          const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+          if (!passwordMatch) return null;
 
           return {
-            id: admin._id,
-            email: admin.email,
-            name: admin.name,
-            usertype: admin.usertype,
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            usertype: user.usertype,
           };
-
         } catch (error) {
-          console.log("Error:", error);
+          console.error("Auth Error:", error);
           return null;
         }
       },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
+  session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.usertype = user.usertype;
-      }
+      if (user) token.usertype = user.usertype;
       return token;
     },
     async session({ session, token }) {
-      session.user.usertype = token.usertype;
-      if (token?.sub) {
+      if (session.user) {
+        session.user.usertype = token.usertype;
         session.user.id = token.sub;
       }
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/login",
-  },
+  pages: { signIn: "/login" },
 };
 
 const handler = NextAuth(authOptions);

@@ -5,9 +5,9 @@ import FrontEndLayout from "@/Component/FrontEndLayout";
 import AdminLayout from "@/Component/AdminLayout";
 
 export const AuthProvider = ({ children }) => {
-    const pathname = usePathname(); 
+    const pathname = usePathname();
 
-    const isAdminRoute = pathname.startsWith('/admin'); 
+    const isAdminRoute = pathname.startsWith('/admin');
 
     return <SessionProvider>
         {isAdminRoute ? (
