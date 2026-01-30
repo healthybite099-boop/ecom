@@ -199,7 +199,7 @@ export default function ProductPage() {
               <button 
                 onClick={() => handleAddToCart(true)}
                 disabled={!inStock || cartLoading}
-                className="flex-1 h-14 bg-[#653825] text-white rounded-2xl font-bold text-lg hover:bg-amber-900 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-900/20"
+                className=" h-14 md:flex-1   bg-[#653825] text-white rounded-2xl font-bold text-lg hover:bg-amber-900 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-lg shadow-amber-900/20"
               >
                 <ShoppingBag className="w-5 h-5" />
                 {cartLoading ? "Adding..." : "Buy Now"}

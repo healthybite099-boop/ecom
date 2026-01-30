@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function ProductCard({ name, price, brand, finalprice, image, slug }) {
+export default function ProductCard({ name, price, brand, finalPrice, image, slug }) {
   const brandBrown = '#653825';
   const brandCream = '#f7f3e8';
 
@@ -66,7 +66,7 @@ export default function ProductCard({ name, price, brand, finalprice, image, slu
 
             <div className="flex flex-col items-center justify-center mt-1">
               <div className="flex items-center gap-2">
-                {finalprice < price && (
+                {finalPrice < price && (
                   <span className="text-[10px] md:text-xs text-stone-400 line-through">
                     ₹{price}
                   </span>
@@ -76,7 +76,7 @@ export default function ProductCard({ name, price, brand, finalprice, image, slu
                   style={{ color: brandBrown }}
                   className="text-base md:text-xl font-black"
                 >
-                  ₹{finalprice}
+                  ₹{finalPrice} 
                 </span>
               </div>
 
