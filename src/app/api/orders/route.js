@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
-
 export async function POST(req) {
   try {
     await dbConnect();
@@ -10,14 +9,23 @@ export async function POST(req) {
       userId,
       items,
       amount,
+      shippingAddress, // <--- Extracted from your Modal frontend
       razorpayOrderId,
       razorpayPaymentId,
       razorpaySignature,
     } = body;
 
+    // Enhanced Validation
     if (!userId || !Array.isArray(items) || items.length === 0 || !amount) {
       return NextResponse.json(
         { success: false, message: "userId, items and amount are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!shippingAddress || !shippingAddress.fullName || !shippingAddress.pincode) {
+      return NextResponse.json(
+        { success: false, message: "Complete shipping address is required" },
         { status: 400 }
       );
     }
@@ -33,6 +41,7 @@ export async function POST(req) {
       userId,
       items: mappedItems,
       amount,
+      shippingAddress, // <--- Saved to DB
       status: "Paid",
       razorpayOrderId,
       razorpayPaymentId,
