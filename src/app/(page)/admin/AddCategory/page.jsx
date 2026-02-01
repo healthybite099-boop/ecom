@@ -90,7 +90,7 @@ export default function CategoryPage() {
 
           {/* 🔹 Server-side status filter */}
           <div className="flex items-center gap-2">
-            <label className="text-sm text-gray-600">Status:</label>
+            <label className="text-sm text-gray-600">Status: </label>
             <select
               value={statusFilter}
               onChange={handleStatusFilterChange}
