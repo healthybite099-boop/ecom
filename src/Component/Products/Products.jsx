@@ -248,7 +248,7 @@ export default function Products() {
                       <ProductCard
                         name={product.name}
                         price={product.price}
-                        finalprice={product.finalPrice}
+                        finalPrice={product.finalPrice}
                         brand={product.brand}
                         image={product.images?.[0]}
                         slug={product.slug}
