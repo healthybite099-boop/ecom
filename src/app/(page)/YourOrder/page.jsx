@@ -3,15 +3,26 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Package, MapPin, Phone, Calendar, Hash, ChevronRight } from "lucide-react";
 
 export default function PerfectOrdersPage() {
   const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
 
   const userId = session?.user?.id || session?.user?._id || "";
+
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status]);
 
   useEffect(() => {
     const fetchOrders = async () => {

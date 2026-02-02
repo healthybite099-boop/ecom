@@ -6,18 +6,6 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-// --- Helpers ---
-function getOrCreateUserId() {
-  if (typeof window === "undefined") return "";
-  const key = "ecom_guest_user_id";
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    localStorage.setItem(key, id);
-  }
-  return id;
-}
-
 async function loadRazorpayScript() {
   if (typeof window === "undefined") return false;
   if (window.Razorpay) return true;
@@ -34,6 +22,7 @@ export default function CartPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userId, setUserId] = useState("");
+
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [checkingOut, setCheckingOut] = useState(false);
@@ -51,15 +40,19 @@ export default function CartPage() {
   });
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      router.replace("/login");
+      return;
+    }
+
     if (status === "authenticated") {
       const realUserId = session?.user?.id || session?.user?._id || "";
       if (realUserId) {
         setUserId(realUserId);
-        return;
       }
     }
-    const id = getOrCreateUserId();
-    setUserId(id);
   }, [session, status]);
 
   useEffect(() => {

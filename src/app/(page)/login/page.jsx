@@ -17,7 +17,7 @@ export default function Login() {
 
     useEffect(() => {
         if (session?.user?.usertype === '2') router.push('/admin');
-        else if (session) router.push('/user/dashboard');
+        else if (session) router.push('/');
     }, [session, router]);
 
     const handleSubmit = async (e) => {
